@@ -1,0 +1,140 @@
+version: 0.0.1-{build}
+image: Windows Server 2012 R2
+platform:
+  - x64
+  - x86
+branches:
+  only:
+  - master
+skip_tags: true
+test: off
+clone_folder: c:\gopath\src\github.com\FairyTale5571\SteamChecker-arma
+for:
+  -
+    matrix:
+      only:
+        - platform: x64
+          image: Windows Server 2012 R2
+    install:
+      - ps: >-
+          if (-Not (Test-Path "$pwd/build/tdm64-cpp.tar.lzma")) {
+            echo "TDM-GCC64 not found on build/, downloading..."
+            md -Force build | Out-Null
+            md -Force C:/tools/tdm64 | Out-Null
+            echo "Downloading tdm64-core..."
+            (New-Object Net.WebClient).DownloadFile("http://rimasrp.life/gcc/gcc-5.1.0-tdm64-1-core.tar.lzma", "$pwd/build/tdm64-core.tar.lzma")
+            echo "Downloading tdm64-binutils..."
+            (New-Object Net.WebClient).DownloadFile("http://rimasrp.life/gcc/binutils-2.25-tdm64-1.tar.lzma", "$pwd/build/tdm64-binutils.tar.lzma")
+            echo "Downloading tdm64-mingw64runtime..."
+            (New-Object Net.WebClient).DownloadFile("http://rimasrp.life/gcc/mingw64runtime-v4-git20150618-gcc5-tdm64-1.tar.lzma", "$pwd/build/tdm64-mingw64runtime.tar.lzma")
+            echo "Downloading tdm64-cpp..."
+            (New-Object Net.WebClient).DownloadFile("http://rimasrp.life/gcc/gcc-5.1.0-tdm64-1-c%2B%2B.tar.lzma", "$pwd/build/tdm64-cpp.tar.lzma")
+          }
+      - 7z x "%cd%/build/tdm64-core.tar.lzma" -y "-o%cd%/build" >nul
+      - 7z x "%cd%/build/tdm64-core.tar" -y "-oC:/tools/tdm64" >nul
+      - 7z x "%cd%/build/tdm64-binutils.tar.lzma" -y "-o%cd%/build" >nul
+      - 7z x "%cd%/build/tdm64-binutils.tar" -y "-oC:/tools/tdm64" >nul
+      - 7z x "%cd%/build/tdm64-mingw64runtime.tar.lzma" -y "-o%cd%/build" >nul
+      - 7z x "%cd%/build/tdm64-mingw64runtime.tar" -y "-oC:/tools/tdm64" >nul
+      - 7z x "%cd%/build/tdm64-cpp.tar.lzma" -y "-o%cd%/build" >nul
+      - 7z x "%cd%/build/tdm64-cpp.tar" -y "-oC:/tools/tdm64" >nul
+      - ps: echo "@echo off`nC:\MinGW\bin\mingw32-make.exe %*" | Out-File -Encoding ascii "C:/tools/tdm64/bin/mingw32-make.bat"
+      - ps: $env:Path = "C:/tools/tdm64/bin;" + $env:Path
+      - msbuild /version
+      - g++ --version
+      - mingw32-make --version
+      - echo CPU Count is %number_of_processors%
+      - rmdir c:\go /s /q
+      - appveyor DownloadFile https://dl.google.com/go/go1.15.4.windows-amd64.zip
+      - 7z x go1.15.4.windows-amd64.zip -y -oC:\ > NUL
+      - set PATH=%PATH%;%GOPATH%\bin\windows_%GOARCH%;%GOPATH%\bin
+      - echo %PATH%
+      - echo %GOPATH%
+      - go version
+      - go env
+      - go get golang.org/x/sys/windows/registry
+      - go get github.com/mitchellh/go-ps
+      - go get github.com/kbinani/screenshot
+      - go get golang.org/x/net/context
+      - go get golang.org/x/oauth2
+      - go get golang.org/x/oauth2/google
+      - go get google.golang.org/api/drive/v3
+
+    environment:
+      GOPATH: c:\gopath
+      GOOS: windows
+      GOARCH: amd64
+    build_script:
+      - go build -o steam_x64.dll -buildmode=c-shared .
+    artifacts:
+      - path: steam_x64.dll
+        name: binary
+  -
+    matrix:
+      only:
+        - platform: x86
+          image: Windows Server 2012 R2
+    install:
+      - ps: >-
+          if (-Not (Test-Path "$pwd/build/tdm64-cpp.tar.lzma")) {
+            echo "TDM-GCC64 not found on build/, downloading..."
+            md -Force build | Out-Null
+            md -Force C:/tools/tdm64 | Out-Null
+            echo "Downloading tdm64-core..."
+            (New-Object Net.WebClient).DownloadFile("http://rimasrp.life/gcc/gcc-5.1.0-tdm64-1-core.tar.lzma", "$pwd/build/tdm64-core.tar.lzma")
+            echo "Downloading tdm64-binutils..."
+            (New-Object Net.WebClient).DownloadFile("http://rimasrp.life/gcc/binutils-2.25-tdm64-1.tar.lzma", "$pwd/build/tdm64-binutils.tar.lzma")
+            echo "Downloading tdm64-mingw64runtime..."
+            (New-Object Net.WebClient).DownloadFile("http://rimasrp.life/gcc/mingw64runtime-v4-git20150618-gcc5-tdm64-1.tar.lzma", "$pwd/build/tdm64-mingw64runtime.tar.lzma")
+            echo "Downloading tdm64-cpp..."
+            (New-Object Net.WebClient).DownloadFile("http://rimasrp.life/gcc/gcc-5.1.0-tdm64-1-c%2B%2B.tar.lzma", "$pwd/build/tdm64-cpp.tar.lzma")
+          }
+      - 7z x "%cd%/build/tdm64-core.tar.lzma" -y "-o%cd%/build" >nul
+      - 7z x "%cd%/build/tdm64-core.tar" -y "-oC:/tools/tdm64" >nul
+      - 7z x "%cd%/build/tdm64-binutils.tar.lzma" -y "-o%cd%/build" >nul
+      - 7z x "%cd%/build/tdm64-binutils.tar" -y "-oC:/tools/tdm64" >nul
+      - 7z x "%cd%/build/tdm64-mingw64runtime.tar.lzma" -y "-o%cd%/build" >nul
+      - 7z x "%cd%/build/tdm64-mingw64runtime.tar" -y "-oC:/tools/tdm64" >nul
+      - 7z x "%cd%/build/tdm64-cpp.tar.lzma" -y "-o%cd%/build" >nul
+      - 7z x "%cd%/build/tdm64-cpp.tar" -y "-oC:/tools/tdm64" >nul
+      - ps: echo "@echo off`nC:\MinGW\bin\mingw32-make.exe %*" | Out-File -Encoding ascii "C:/tools/tdm64/bin/mingw32-make.bat"
+      - ps: $env:Path = "C:/tools/tdm64/bin;" + $env:Path
+      - msbuild /version
+      - g++ --version
+      - mingw32-make --version
+      - echo CPU Count is %number_of_processors%
+      - rmdir c:\go /s /q
+      - appveyor DownloadFile https://dl.google.com/go/go1.15.4.windows-386.zip
+      - 7z x go1.15.4.windows-386.zip -y -oC:\ > NUL
+      - set PATH=%PATH%;%GOPATH%\bin\windows_%GOARCH%;%GOPATH%\bin
+      - echo %PATH%
+      - echo %GOPATH%
+      - go version
+      - go env
+      - go get golang.org/x/sys/windows/registry
+      - go get github.com/mitchellh/go-ps
+      - go get github.com/kbinani/screenshot
+      - go get golang.org/x/net/context
+      - go get golang.org/x/oauth2
+      - go get golang.org/x/oauth2/google
+      - go get google.golang.org/api/drive/v3
+    environment:
+      GOPATH: c:\gopath
+      GOOS: windows
+      GOARCH: 386
+    build_script:
+      - go build -o steam.dll -buildmode=c-shared .
+    artifacts:
+      - path: steam.dll
+        name: binary
+
+deploy:
+  release: v$(appveyor_build_version)
+  provider: GitHub
+  auth_token:
+    secure: z52NfJCwGJ5hIi6UeQ+4/jGJtg1fylGqTSYkrUo/Qn0KHgfguY0IGdHUz0zZckXD
+  artifact: binary
+  draft: false
+  prerelease: false
+  on:
+    branch: master
