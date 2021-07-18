@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strconv"
 
-	steamapi "github.com/Philipp15b/go-steamapi"
+	"github.com/Philipp15b/go-steamapi"
 )
 
 type Steam struct {
@@ -35,11 +35,10 @@ func makeUids(args []string) []uint64 {
 	return steamIDs
 }
 
-func getVAC(args ...string) string {
+func getBans(args ...string) string {
 	if !Inited {
 		return "Init extension first"
 	}
-
 	steamIDs := makeUids(args)
 	bans, err := steamapi.GetPlayerBans(steamIDs, g.SteamAPIkey)
 	if err != nil {
@@ -47,7 +46,7 @@ func getVAC(args ...string) string {
 	}
 	var res string
 	for idx, _ := range bans {
-		res += fmt.Sprintf(`["%v",%v,%d,%d]`,bans[idx].SteamID, bans[idx].VACBanned, bans[idx].NumberOfVACBans, bans[idx].DaysSinceLastBan)
+		res += fmt.Sprintf(`["%v",%v,%v,"%s",%v,%d,%d]`, bans[idx].SteamID, bans[idx].CommunityBanned, bans[idx].VACBanned, bans[idx].EconomyBan, bans[idx].NumberOfVACBans, bans[idx].DaysSinceLastBan, bans[idx].NumberOfGameBans)
 		fmt.Println(len(bans))
 		if idx != len(bans) - 1 && len(bans) > 0 {
 			res += ","
@@ -56,16 +55,30 @@ func getVAC(args ...string) string {
 	return fmt.Sprintf("[%s]",res)
 }
 
-func getEAC(args ...string) string {
-	return ""
-}
-
-func getEco(args ...string) string {
-	return ""
-}
-
 func getProfileName(args ...string) string {
-	return ""
+	if !Inited {
+		return "Init extension first"
+	}
+	fmt.Println("Get profile name")
+	steamIDs := makeUids(args)
+	names, err := steamapi.GetPlayerSummaries(steamIDs, g.SteamAPIkey)
+	if err != nil {
+		return err.Error()
+	}
+	var res string
+	for idx, _ := range names {
+		res += fmt.Sprintf(`["%v",%d,"%v","%v"]`,
+			names[idx].SteamID,
+			names[idx].CommunityVisibilityState,
+			names[idx].ProfileURL,
+			names[idx].PersonaName,
+		)
+		fmt.Println(len(names))
+		if idx != len(names) - 1 && len(names) > 0 {
+			res += ","
+		}
+	}
+	return fmt.Sprintf("[%s]",res)
 }
 
 func getA3Time(args ...string) string {
