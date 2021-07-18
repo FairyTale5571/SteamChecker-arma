@@ -15,3 +15,7 @@
 # vendor/
 
 test.bat
+
+steam_x64.h
+
+test_script.sqf
