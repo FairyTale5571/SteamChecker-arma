@@ -11,7 +11,7 @@
 ```c
 "steam" callExtension ["getBans",["uid1","uid2","uid3"]]
 ```
-	Return: multiple array 
+	Return: multiple array
 
 		SteamID string
 		CommunityBanned bool
@@ -25,6 +25,7 @@
 ```c
 "steam" callExtension ["getProfileName",["uid1","uid2","uid3"]]
 ```
+	Return: multiple array
 		SteamID string
 		CommunityVisibilityState int
 		ProfileURL string
