@@ -52,14 +52,6 @@ for:
       - echo %GOPATH%
       - go version
       - go env
-      - go get golang.org/x/sys/windows/registry
-      - go get github.com/mitchellh/go-ps
-      - go get github.com/kbinani/screenshot
-      - go get golang.org/x/net/context
-      - go get golang.org/x/oauth2
-      - go get golang.org/x/oauth2/google
-      - go get google.golang.org/api/drive/v3
-
     environment:
       GOPATH: c:\gopath
       GOOS: windows
@@ -111,13 +103,6 @@ for:
       - echo %GOPATH%
       - go version
       - go env
-      - go get golang.org/x/sys/windows/registry
-      - go get github.com/mitchellh/go-ps
-      - go get github.com/kbinani/screenshot
-      - go get golang.org/x/net/context
-      - go get golang.org/x/oauth2
-      - go get golang.org/x/oauth2/google
-      - go get google.golang.org/api/drive/v3
     environment:
       GOPATH: c:\gopath
       GOOS: windows
