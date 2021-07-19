@@ -5,7 +5,7 @@ platform:
   - x86
 branches:
   only:
-  - master
+  - main
 skip_tags: true
 test: off
 clone_folder: c:\gopath\src\github.com\FairyTale5571\SteamChecker-arma
@@ -122,4 +122,4 @@ deploy:
   draft: false
   prerelease: false
   on:
-    branch: master
+    branch: main
